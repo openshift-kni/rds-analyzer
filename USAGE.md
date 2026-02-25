@@ -21,11 +21,11 @@ Start there to install the tool and run your first analysis.
 
 ### Full workflow: docs/
 
-A **more thorough, end-to-end example** is in the docs folder. It walks through the complete process from having cluster data to producing deviation reports and using them to drive remediation (including opening Jira tickets).
+A **more thorough, end-to-end example** is in the docs folder. It walks through the complete process from having cluster data to producing deviation reports and using them to drive remediation.
 
 | Document | Purpose |
 |----------|--------|
-| [docs/full-workflow.md](docs/full-workflow.md) | Full workflow: must-gather → cluster compare plugin → telco reference → run RDS Analyzer for deviation reporting → use the report to open and track Jiras. |
+| [docs/full-workflow.md](docs/full-workflow.md) | Full workflow: must-gather → cluster compare plugin → telco reference → run RDS Analyzer for deviation reporting → use the report to open and track issues. |
 
 That doc assumes a must-gather has been collected and covers:
 
@@ -38,5 +38,5 @@ That doc assumes a must-gather has been collected and covers:
 ## Quick reference
 
 - **New to the project?** → [README](README.md)  
-- **End-to-end workflow (must-gather → cluster compare → telco reference → deviation report → Jiras)?** → [docs/full-workflow.md](docs/full-workflow.md)  
+- **End-to-end workflow (must-gather → cluster compare → telco reference → deviation report → drive remediation)?** → [docs/full-workflow.md](docs/full-workflow.md)  
 - **Rule engine and development details?** → [AGENTS.md](AGENTS.md)
