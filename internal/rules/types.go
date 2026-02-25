@@ -40,6 +40,9 @@ type LabelAnnotationRule struct {
 	// Value is the label/annotation value pattern (optional, supports glob).
 	// If omitted, matches any value.
 	Value string `yaml:"value,omitempty"`
+	// ValueRegex is a regular expression pattern for matching values (optional).
+	// Takes precedence over Value when specified.
+	ValueRegex string `yaml:"value_regex,omitempty"`
 	// Description explains the impact of this label/annotation (required).
 	Description string `yaml:"description"`
 	// Impact determines the severity when this rule matches (required, supports versioning).

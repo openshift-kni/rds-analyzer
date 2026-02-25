@@ -291,19 +291,27 @@ func (g *TextGenerator) printValueDifferences(diffCheck types.DiffCheck, ruleRes
 
 // printContextualValueDifferences outputs value differences with surrounding context.
 func (g *TextGenerator) printContextualValueDifferences(diffCheck types.DiffCheck, ruleResult rules.EvaluationResult) bool {
+	hasNeedsReview := false
+
+	// Combine ExpectedValue and ExpectedNotFound for the expected section.
+	expectedTargets := append([]string{}, diffCheck.ExpectedValue...)
+	expectedTargets = append(expectedTargets, diffCheck.ExpectedNotFound...)
+
 	fmt.Fprintln(g.writer, "expected:")
-	g.printContextualDiffViewColored(diffCheck.ExpectedWithContext, parser.ColorGreen)
+	if needsReview := g.printContextualDiffViewWithRules(diffCheck.ExpectedWithContext, expectedTargets, parser.ColorGreen, ruleResult); needsReview {
+		hasNeedsReview = true
+	}
+
+	// Combine FoundValue and FoundNotExpected for the found section.
+	foundTargets := append([]string{}, diffCheck.FoundValue...)
+	foundTargets = append(foundTargets, diffCheck.FoundNotExpected...)
 
 	fmt.Fprintln(g.writer, "found:")
-	g.printContextualDiffViewColored(diffCheck.FoundWithContext, parser.ColorRed)
-
-	for _, line := range diffCheck.FoundValue {
-		ruleIDs := g.getMatchingRuleIDs(line, "ExpectedFound", ruleResult)
-		if len(ruleIDs) == 0 {
-			return true
-		}
+	if needsReview := g.printContextualDiffViewWithRules(diffCheck.FoundWithContext, foundTargets, parser.ColorRed, ruleResult); needsReview {
+		hasNeedsReview = true
 	}
-	return false
+
+	return hasNeedsReview
 }
 
 // printPlainValueDifferences outputs value differences without context.
@@ -337,6 +345,59 @@ func (g *TextGenerator) printContextualDiffViewColored(diffLines []types.DiffLin
 			fmt.Fprintln(g.writer, parser.ColorDim+dl.Content+parser.ColorReset)
 		}
 	}
+}
+
+// printContextualDiffViewWithRules outputs diff lines with context and rule markers.
+// It shows rule match markers for lines that are in targetLines.
+func (g *TextGenerator) printContextualDiffViewWithRules(diffLines []types.DiffLine, targetLines []string, changedColor string, ruleResult rules.EvaluationResult) bool {
+	// Build a set of target line contents for matching.
+	targetSet := make(map[string]bool)
+	for _, line := range targetLines {
+		targetSet[strings.TrimSpace(line)] = true
+	}
+
+	hasNeedsReview := false
+
+	for _, dl := range diffLines {
+		trimmed := strings.TrimSpace(dl.Content)
+
+		if dl.IsChanged && targetSet[trimmed] {
+			// This is a target line - check for rule matches across all condition types.
+			ruleIDs := g.getMatchingRuleIDsAnyType(dl.Content, ruleResult)
+			if len(ruleIDs) == 0 {
+				hasNeedsReview = true
+			}
+			fmt.Fprint(g.writer, changedColor+dl.Content+parser.ColorReset)
+			g.printRuleIDsSuffix(ruleIDs)
+		} else if dl.IsChanged {
+			// Changed line but not in target set - just print colored.
+			fmt.Fprintln(g.writer, changedColor+dl.Content+parser.ColorReset)
+		} else {
+			// Context line - print dim.
+			fmt.Fprintln(g.writer, parser.ColorDim+dl.Content+parser.ColorReset)
+		}
+	}
+
+	return hasNeedsReview
+}
+
+// getMatchingRuleIDsAnyType returns rule IDs that match a line across any condition type.
+func (g *TextGenerator) getMatchingRuleIDsAnyType(line string, ruleResult rules.EvaluationResult) []string {
+	conditionTypes := []string{"ExpectedFound", "FoundNotExpected", "ExpectedNotFound"}
+	seenRules := make(map[string]bool)
+	var ruleIDs []string
+
+	for _, condType := range conditionTypes {
+		ids := g.getMatchingRuleIDs(line, condType, ruleResult)
+		for _, id := range ids {
+			if !seenRules[id] {
+				seenRules[id] = true
+				ruleIDs = append(ruleIDs, id)
+			}
+		}
+	}
+
+	return ruleIDs
 }
 
 // determineImpact calculates the final impact considering unmatched lines.
