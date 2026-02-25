@@ -2050,7 +2050,7 @@ func TestLabelAnnotationIndentationHandling(t *testing.T) {
 				"    matchLabels:",
 			},
 			wantMatchedTexts: []string{},
-			description: "no label-annotation matches expected",
+			description:      "no label-annotation matches expected",
 		},
 	}
 
@@ -2109,9 +2109,9 @@ func TestLabelAnnotationWithContextLines(t *testing.T) {
 				CRName:           "test-cr",
 				TemplateFileName: "test.yaml",
 				FoundWithContext: []types.DiffLine{
-					{Content: "  labels:", IsChanged: false},                        // context
+					{Content: "  labels:", IsChanged: false},                            // context
 					{Content: "    config.nokia.com/reboot: required", IsChanged: true}, // changed
-					{Content: "    existing-label: value", IsChanged: false},        // context
+					{Content: "    existing-label: value", IsChanged: false},            // context
 				},
 				FoundNotExpected: []string{
 					"    config.nokia.com/reboot: required",
@@ -2129,8 +2129,8 @@ func TestLabelAnnotationWithContextLines(t *testing.T) {
 				TemplateFileName: "test.yaml",
 				FoundWithContext: []types.DiffLine{
 					{Content: "metadata:", IsChanged: false},
-					{Content: "  annotations:", IsChanged: false},                           // context
-					{Content: "    openshift.io/node-selector: \"\"", IsChanged: true},      // changed
+					{Content: "  annotations:", IsChanged: false},                      // context
+					{Content: "    openshift.io/node-selector: \"\"", IsChanged: true}, // changed
 					{Content: "    workload.openshift.io/allowed: management", IsChanged: false},
 				},
 				FoundNotExpected: []string{

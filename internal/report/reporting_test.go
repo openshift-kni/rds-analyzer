@@ -114,7 +114,7 @@ func TestReportingGenerator_Generate(t *testing.T) {
 	if !strings.Contains(output, "RDS Analyzer Report") {
 		t.Error("Missing report header")
 	}
-	if !strings.Contains(output, "OCP Version: 4.20") {
+	if !strings.Contains(output, "Used target OCP version: 4.20") {
 		t.Error("Missing OCP version")
 	}
 
@@ -437,9 +437,9 @@ func TestReportingGenerator_NoOCPVersion(t *testing.T) {
 
 	output := buf.String()
 
-	// Should show "Not specified" for OCP version.
-	if !strings.Contains(output, "OCP Version: Not specified") {
-		t.Error("Expected 'OCP Version: Not specified' when no version is set")
+	// When no version is set, the version line should be omitted entirely.
+	if strings.Contains(output, "OCP version") || strings.Contains(output, "target OCP version") {
+		t.Error("Expected no OCP version line when no version is set")
 	}
 }
 
