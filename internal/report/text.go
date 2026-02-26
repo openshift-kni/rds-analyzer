@@ -79,7 +79,6 @@ func (g *TextGenerator) printMissingCRs(issues types.ValidationIssues, diffs []t
 	missingStats := map[string]int{
 		"Impacting":    0,
 		"NotImpacting": 0,
-		"NeedsReview":  0,
 	}
 
 	// Sort groups for consistent output.
@@ -148,7 +147,6 @@ func (g *TextGenerator) printMissingCRs(issues types.ValidationIssues, diffs []t
 	fmt.Fprintln(g.writer, "Missing CRs Impact Summary:")
 	fmt.Fprintf(g.writer, "  Impacting:     %d\n", missingStats["Impacting"])
 	fmt.Fprintf(g.writer, "  Not Impacting: %d\n", missingStats["NotImpacting"])
-	fmt.Fprintf(g.writer, "  Needs Review:  %d\n", missingStats["NeedsReview"])
 	fmt.Fprintln(g.writer)
 }
 

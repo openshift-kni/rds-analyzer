@@ -545,6 +545,60 @@ const htmlTemplate = `<!DOCTYPE html>
             margin-top: 5px;
         }
 
+        .tooltip-container {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tooltip-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            font-size: 0.75rem;
+            font-weight: bold;
+            cursor: help;
+        }
+
+        .tooltip-icon:hover + .tooltip-text,
+        .tooltip-text:hover {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #212529;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            z-index: 100;
+            transition: opacity 0.2s;
+        }
+
+        .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #212529 transparent transparent transparent;
+        }
+
         .impact-badge {
             display: inline-flex;
             align-items: center;
@@ -1244,19 +1298,43 @@ const htmlTemplate = `<!DOCTYPE html>
             <div class="summary-grid">
                 <div class="stat-card">
                     <div class="value">{{.Summary.TotalCRs}}</div>
-                    <div class="label">CRs Scanned<br>(Total number of CRs that were scanned)</div>
+                    <div class="label">
+                        <span class="tooltip-container">
+                            CRs Scanned
+                            <span class="tooltip-icon">?</span>
+                            <span class="tooltip-text">Total number of CRs that were scanned</span>
+                        </span>
+                    </div>
                 </div>
                 <div class="stat-card">
                     <div class="value">{{.Summary.TotalMissing}}</div>
-                    <div class="label">Missing CRs<br>(CRs that were expected in the cluster but were not found)</div>
+                    <div class="label">
+                        <span class="tooltip-container">
+                            Missing CRs
+                            <span class="tooltip-icon">?</span>
+                            <span class="tooltip-text">CRs that were expected in the cluster but were not found</span>
+                        </span>
+                    </div>
                 </div>
                 <div class="stat-card">
                     <div class="value">{{.Summary.DiffCRs}}</div>
-                    <div class="label">CRs with Differences<br>(CRs that have differences between the expected and found configuration)</div>
+                    <div class="label">
+                        <span class="tooltip-container">
+                            CRs with Differences
+                            <span class="tooltip-icon">?</span>
+                            <span class="tooltip-text">CRs that have differences between the expected and found configuration</span>
+                        </span>
+                    </div>
                 </div>
                 <div class="stat-card">
                     <div class="value">{{.Summary.UnmatchedCRs}}</div>
-                    <div class="label">Unmatched CRs<br>(CRs that were found in the cluster but do not match any RDS template)</div>
+                    <div class="label">
+                        <span class="tooltip-container">
+                            Unmatched CRs
+                            <span class="tooltip-icon">?</span>
+                            <span class="tooltip-text">CRs that were found in the cluster but do not match any RDS template</span>
+                        </span>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1291,10 +1369,6 @@ const htmlTemplate = `<!DOCTYPE html>
                 <div class="impact-stat not-impacting">
                     <div class="count">{{.ImpactStats.MissingNotImpacting}}</div>
                     <div class="label">Not Impacting</div>
-                </div>
-                <div class="impact-stat needs-review">
-                    <div class="count">{{.ImpactStats.MissingNeedsReview}}</div>
-                    <div class="label">Needs Review</div>
                 </div>
             </div>
         </section>
