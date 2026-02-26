@@ -1436,7 +1436,11 @@ const htmlTemplate = `<!DOCTYPE html>
             <details class="category-collapsible required" open>
                 <summary>
                     <div class="category-title">
-                        <span>Required</span>
+                        <span class="tooltip-container">
+                            Required
+                            <span class="tooltip-icon">?</span>
+                            <span class="tooltip-text">These CRs are required by the reference configuration and must be present in the cluster.</span>
+                        </span>
                         <span class="category-count">{{.ImpactStats.RequiredCRCount}} CRs</span>
                     </div>
                 </summary>
@@ -1472,7 +1476,11 @@ const htmlTemplate = `<!DOCTYPE html>
             <details class="category-collapsible optional">
                 <summary>
                     <div class="category-title">
-                        <span>Optional</span>
+                        <span class="tooltip-container">
+                            Optional
+                            <span class="tooltip-icon">?</span>
+                            <span class="tooltip-text">These CRs, although optional, are expected. Engage with the telco team to explain why these are missing from the cluster.</span>
+                        </span>
                         <span class="category-count">{{.ImpactStats.OptionalCRCount}} CRs</span>
                     </div>
                 </summary>
