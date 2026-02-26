@@ -1351,13 +1351,13 @@ const htmlTemplate = `<!DOCTYPE html>
                     <div class="count">{{.ImpactStats.NotImpacting}}</div>
                     <div class="label">Not Impacting</div>
                 </div>
-                <div class="impact-stat not-deviation">
-                    <div class="count">{{.ImpactStats.NotADeviation}}</div>
-                    <div class="label">Not a Deviation</div>
-                </div>
                 <div class="impact-stat needs-review">
                     <div class="count">{{.ImpactStats.NeedsReview}}</div>
                     <div class="label">Needs Review</div>
+                </div>
+                <div class="impact-stat not-deviation">
+                    <div class="count">{{.ImpactStats.NotADeviation}}</div>
+                    <div class="label">Not a Deviation</div>
                 </div>
             </div>
             <h4 style="margin: 20px 0 15px 0; color: #6c757d;">Missing CRs</h4>

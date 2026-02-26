@@ -219,8 +219,8 @@ func (g *TextGenerator) printDiffs(diffs []types.Diff) {
 	fmt.Fprintln(g.writer, "==================================================")
 	fmt.Fprintf(g.writer, "Impacting:      %d\n", impactStats["Impacting"])
 	fmt.Fprintf(g.writer, "Not Impacting:  %d\n", impactStats["NotImpacting"])
-	fmt.Fprintf(g.writer, "Not a Deviation: %d\n", impactStats["NotADeviation"])
 	fmt.Fprintf(g.writer, "Needs Review:   %d\n", impactStats["NeedsReview"])
+	fmt.Fprintf(g.writer, "Not a Deviation: %d\n", impactStats["NotADeviation"])
 	fmt.Fprintln(g.writer)
 }
 
