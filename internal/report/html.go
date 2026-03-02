@@ -239,26 +239,28 @@ func (g *HTMLGenerator) processMissingCRs(issues types.ValidationIssues, diffs [
 				}
 				devData.CRs = append(devData.CRs, crData)
 
-				switch result.Impact {
-				case "Impacting":
-					stats.MissingImpacting++
-					hasImpactingCR = true
-				case "NotImpacting":
-					stats.MissingNotImpacting++
-				default:
-					stats.MissingNeedsReview++
+				if !result.IsSatisfied {
+					switch result.Impact {
+					case "Impacting":
+						stats.MissingImpacting++
+						hasImpactingCR = true
+					case "NotImpacting":
+						stats.MissingNotImpacting++
+					default:
+						stats.MissingNeedsReview++
+					}
 				}
 			}
 
 			group.Deviations = append(group.Deviations, devData)
 		}
 
-		// Group is required if any CR in it has Impacting impact.
+		// Group is required if any unsatisfied CR in it has Impacting impact.
 		group.IsRequired = hasImpactingCR
 		if hasImpactingCR {
-			stats.RequiredCRCount += countGroupCRs(group)
+			stats.RequiredCRCount += countUnsatisfiedGroupCRs(group)
 		} else {
-			stats.OptionalCRCount += countGroupCRs(group)
+			stats.OptionalCRCount += countUnsatisfiedGroupCRs(group)
 		}
 
 		groups = append(groups, group)
@@ -267,11 +269,15 @@ func (g *HTMLGenerator) processMissingCRs(issues types.ValidationIssues, diffs [
 	return groups, stats
 }
 
-// countGroupCRs counts the total number of CRs in a MissingCRGroup.
-func countGroupCRs(group MissingCRGroup) int {
+// countUnsatisfiedGroupCRs counts the number of unsatisfied CRs in a MissingCRGroup.
+func countUnsatisfiedGroupCRs(group MissingCRGroup) int {
 	count := 0
 	for _, dev := range group.Deviations {
-		count += len(dev.CRs)
+		for _, cr := range dev.CRs {
+			if !cr.IsSatisfied {
+				count++
+			}
+		}
 	}
 	return count
 }
