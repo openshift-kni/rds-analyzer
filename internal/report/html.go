@@ -47,6 +47,7 @@ type SummaryData struct {
 type MissingCRGroup struct {
 	GroupName  string
 	IsRequired bool
+	CRCount    int
 	Deviations []DeviationData
 }
 
@@ -257,10 +258,11 @@ func (g *HTMLGenerator) processMissingCRs(issues types.ValidationIssues, diffs [
 
 		// Group is required if any unsatisfied CR in it has Impacting impact.
 		group.IsRequired = hasImpactingCR
+		group.CRCount = countUnsatisfiedGroupCRs(group)
 		if hasImpactingCR {
-			stats.RequiredCRCount += countUnsatisfiedGroupCRs(group)
+			stats.RequiredCRCount += group.CRCount
 		} else {
-			stats.OptionalCRCount += countUnsatisfiedGroupCRs(group)
+			stats.OptionalCRCount += group.CRCount
 		}
 
 		groups = append(groups, group)
@@ -1186,6 +1188,16 @@ const htmlTemplate = `<!DOCTYPE html>
             border: 1px solid var(--color-border);
         }
 
+        .group-count {
+            font-size: 0.8rem;
+            font-weight: normal;
+            color: var(--color-text-muted);
+            background: #fff;
+            padding: 1px 8px;
+            border-radius: 10px;
+            border: 1px solid var(--color-border);
+        }
+
         details.group-collapsible {
             margin-bottom: 10px;
             border: 1px solid #e9ecef;
@@ -1470,6 +1482,7 @@ const htmlTemplate = `<!DOCTYPE html>
                         <summary>
                             <div class="summary-info">
                                 <span class="summary-title">{{.GroupName}}</span>
+                                <span class="group-count">{{.CRCount}}</span>
                             </div>
                         </summary>
                         <div class="group-content">
@@ -1517,6 +1530,7 @@ const htmlTemplate = `<!DOCTYPE html>
                         <summary>
                             <div class="summary-info">
                                 <span class="summary-title">{{.GroupName}}</span>
+                                <span class="group-count">{{.CRCount}}</span>
                             </div>
                         </summary>
                         <div class="group-content">
