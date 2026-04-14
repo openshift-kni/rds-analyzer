@@ -109,6 +109,12 @@ func (e *Engine) GetTargetVersion() OCPVersion {
 	return e.targetVersion
 }
 
+// GetRDSVariant returns the RDS variant declared in the rules file (e.g., "Core", "RAN", "Hub").
+// Returns an empty string if the rds-variant field is not set.
+func (e *Engine) GetRDSVariant() string {
+	return e.config.RDSVariant
+}
+
 // Evaluate evaluates a DiffCheck against all applicable rules.
 // It returns an EvaluationResult containing the overall impact and
 // details about which conditions matched.

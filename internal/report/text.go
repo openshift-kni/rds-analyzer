@@ -32,8 +32,14 @@ func NewTextGenerator(ruleEngine *rules.Engine) *TextGenerator {
 func (g *TextGenerator) Generate(w io.Writer, report types.ValidationReport) error {
 	g.writer = w
 
-	// Show target version if set.
-	if targetVersion := g.ruleEngine.GetTargetVersion(); !targetVersion.IsZero() {
+	// Show RDS variant and/or target version if set.
+	variant := g.ruleEngine.GetRDSVariant()
+	targetVersion := g.ruleEngine.GetTargetVersion()
+	if variant != "" && !targetVersion.IsZero() {
+		fmt.Fprintf(w, "Analyzing using %q RDS rules and target OCP version: %s\n\n", variant, targetVersion)
+	} else if variant != "" {
+		fmt.Fprintf(w, "Analyzing using %q RDS rules\n\n", variant)
+	} else if !targetVersion.IsZero() {
 		fmt.Fprintf(w, "Analyzing using target OCP version: %s\n\n", targetVersion)
 	}
 

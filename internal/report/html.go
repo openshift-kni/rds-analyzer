@@ -26,6 +26,7 @@ func escapeHTML(s string) template.HTML {
 type HTMLReport struct {
 	GeneratedAt     string
 	OCPVersion      string
+	RDSVariant      string
 	Summary         SummaryData
 	MissingCRs      []MissingCRGroup
 	Diffs           []DiffData
@@ -171,6 +172,8 @@ func (g *HTMLGenerator) buildHTMLReport(report types.ValidationReport) HTMLRepor
 	if targetVersion := g.ruleEngine.GetTargetVersion(); !targetVersion.IsZero() {
 		htmlReport.OCPVersion = targetVersion.String()
 	}
+
+	htmlReport.RDSVariant = g.ruleEngine.GetRDSVariant()
 
 	htmlReport.MissingCRs, htmlReport.ImpactStats = g.processMissingCRs(report.Summary.ValidationIssues, report.Diffs)
 	htmlReport.Summary.TotalMissing = htmlReport.ImpactStats.RequiredCRCount + htmlReport.ImpactStats.OptionalCRCount
@@ -1341,7 +1344,7 @@ const htmlTemplate = `<!DOCTYPE html>
         <header>
             <h1>RDS Validation Report</h1>
             <div class="meta">
-                <span>Generated at {{.GeneratedAt}}{{if .OCPVersion}}. Using target OCP Version: {{.OCPVersion}}{{end}} </span>
+                <span>Generated at {{.GeneratedAt}}{{if .RDSVariant}}. Using "{{.RDSVariant}}" RDS rules{{if .OCPVersion}} and target OCP Version: {{.OCPVersion}}{{end}}{{else if .OCPVersion}}. Using target OCP Version: {{.OCPVersion}}{{end}} </span>
             </div>
         </header>
 

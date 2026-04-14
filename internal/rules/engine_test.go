@@ -1458,6 +1458,89 @@ func TestGetters(t *testing.T) {
 			t.Error("Expected non-zero target version")
 		}
 	})
+
+	t.Run("GetRDSVariant_absent", func(t *testing.T) {
+		// testRulesYAML does not include rds-variant; should return empty string.
+		if got := engine.GetRDSVariant(); got != "" {
+			t.Errorf("expected empty variant, got %q", got)
+		}
+	})
+}
+
+// TestGetRDSVariant tests that the rds-variant YAML field is parsed and returned correctly.
+func TestGetRDSVariant(t *testing.T) {
+	tests := []struct {
+		name string
+		yaml string
+		want string
+	}{
+		{
+			name: "variant set to Hub",
+			yaml: `
+version: "1.0"
+description: "Hub Rules"
+rds-variant: "Hub"
+settings:
+  default_impact: "NeedsReview"
+rules: []
+`,
+			want: "Hub",
+		},
+		{
+			name: "variant set to RAN",
+			yaml: `
+version: "1.0"
+description: "RAN Rules"
+rds-variant: "RAN"
+settings:
+  default_impact: "NeedsReview"
+rules: []
+`,
+			want: "RAN",
+		},
+		{
+			name: "variant set to Core",
+			yaml: `
+version: "1.0"
+description: "Core Rules"
+rds-variant: "Core"
+settings:
+  default_impact: "NeedsReview"
+rules: []
+`,
+			want: "Core",
+		},
+		{
+			name: "variant absent",
+			yaml: `
+version: "1.0"
+description: "Rules without variant"
+settings:
+  default_impact: "NeedsReview"
+rules: []
+`,
+			want: "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tmpDir := t.TempDir()
+			rulesPath := filepath.Join(tmpDir, "rules.yaml")
+			if err := os.WriteFile(rulesPath, []byte(tt.yaml), 0644); err != nil {
+				t.Fatalf("failed to write rules file: %v", err)
+			}
+
+			engine, err := NewEngine(rulesPath)
+			if err != nil {
+				t.Fatalf("NewEngine failed: %v", err)
+			}
+
+			if got := engine.GetRDSVariant(); got != tt.want {
+				t.Errorf("GetRDSVariant() = %q, want %q", got, tt.want)
+			}
+		})
+	}
 }
 
 // TestConditionTypes tests different condition types (Any, FoundNotExpected, etc).

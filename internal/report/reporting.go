@@ -85,6 +85,10 @@ func (g *ReportingGenerator) printHeader() {
 		fmt.Fprintf(g.writer, "Used target OCP version: %s\n", targetVersion)
 	}
 
+	if variant := g.ruleEngine.GetRDSVariant(); variant != "" {
+		fmt.Fprintf(g.writer, "Used RDS Variant: %s\n", variant)
+	}
+
 	fmt.Fprintf(g.writer, "Generated: %s\n", time.Now().Format("2006-01-02"))
 	fmt.Fprintln(g.writer)
 }

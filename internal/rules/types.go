@@ -10,8 +10,10 @@ import (
 // It contains global settings, rules that match specific CRs, global rules
 // that apply to all CRs, and count rules for aggregate checks.
 type RulesConfig struct {
-	Version              string               `yaml:"version"`
-	Description          string               `yaml:"description"`
+	Version     string `yaml:"version"`
+	Description string `yaml:"description"`
+	// RDSVariant identifies which RDS variant these rules apply to (e.g., "Core", "RAN", "Hub").
+	RDSVariant           string               `yaml:"rds-variant"`
 	Settings             Settings             `yaml:"settings"`
 	LabelAnnotationRules LabelAnnotationRules `yaml:"label_annotation_rules"`
 	GlobalRules          []Rule               `yaml:"global_rules"`
