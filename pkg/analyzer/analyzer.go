@@ -48,7 +48,7 @@ func NewFromBytes(rulesData []byte, version string) (*Analyzer, error) {
 }
 
 // Analyze processes a validation report and writes results to the given writer.
-// The format parameter determines output type: "text" or "html".
+// The format parameter determines output type: "text", "html", or "json".
 // The mode parameter determines output mode: "simple" or "reporting".
 func (a *Analyzer) Analyze(w io.Writer, validationReport types.ValidationReport, format, mode string) error {
 	switch mode {
@@ -75,6 +75,9 @@ func (a *Analyzer) generateFormattedOutput(w io.Writer, validationReport types.V
 		return generator.Generate(w, validationReport)
 	case "html":
 		generator := report.NewHTMLGenerator(a.ruleEngine)
+		return generator.Generate(w, validationReport)
+	case "json":
+		generator := report.NewJSONGenerator(a.ruleEngine)
 		return generator.Generate(w, validationReport)
 	default:
 		return fmt.Errorf("unsupported output format: %s", format)

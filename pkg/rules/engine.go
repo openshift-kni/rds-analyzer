@@ -18,6 +18,7 @@ import (
 type Engine struct {
 	config        RulesConfig
 	targetVersion OCPVersion
+	rulesFile     string
 }
 
 // NewEngine creates a new rule engine from a YAML file.
@@ -63,6 +64,7 @@ func NewEngineWithVersion(rulesFile, version string) (*Engine, error) {
 	if err != nil {
 		return nil, fmt.Errorf("rules file %s: %w", rulesFile, err)
 	}
+	engine.rulesFile = rulesFile
 	return engine, nil
 }
 
@@ -142,6 +144,12 @@ func (e *Engine) GetTargetVersion() OCPVersion {
 // Returns an empty string if the rds-variant field is not set.
 func (e *Engine) GetRDSVariant() string {
 	return e.config.RDSVariant
+}
+
+// GetRulesFile returns the path to the rules file used to create this engine.
+// Returns an empty string if the engine was created from in-memory bytes.
+func (e *Engine) GetRulesFile() string {
+	return e.rulesFile
 }
 
 // Evaluate evaluates a DiffCheck against all applicable rules.
