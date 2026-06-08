@@ -244,10 +244,7 @@ func (g *ReportingGenerator) evaluateAllDiffs(diffs []types.Diff) ([]reportingDi
 			continue
 		}
 
-		diffCheck, err := parser.ParseExpectedAndFound(d.DiffOutput, d.CRName, filepath.Base(d.CorrelatedTemplate))
-		if err != nil {
-			continue
-		}
+		diffCheck := parser.ParseExpectedAndFound(d.DiffOutput, d.CRName, filepath.Base(d.CorrelatedTemplate))
 
 		// Collect all DiffChecks for count rule evaluation.
 		allDiffChecks = append(allDiffChecks, diffCheck)

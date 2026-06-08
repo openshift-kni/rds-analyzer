@@ -22,14 +22,14 @@ type diffLineInfo struct {
 //  1. Lines only in expected (prefixed with -): added to ExpectedNotFound
 //  2. Lines only in found (prefixed with +): added to FoundNotExpected
 //  3. Lines with same key but different values: paired in ExpectedValue/FoundValue
-func ParseExpectedAndFound(diffOutput, crName, templateFileName string) (types.DiffCheck, error) {
+func ParseExpectedAndFound(diffOutput, crName, templateFileName string) types.DiffCheck {
 	diffCheck := types.DiffCheck{
 		CRName:           crName,
 		TemplateFileName: templateFileName,
 	}
 
 	if diffOutput == "" {
-		return diffCheck, nil
+		return diffCheck
 	}
 
 	lines := strings.Split(diffOutput, "\n")
@@ -59,7 +59,7 @@ func ParseExpectedAndFound(diffOutput, crName, templateFileName string) (types.D
 	}
 
 	if len(expectedLines) == 0 && len(foundLines) == 0 {
-		return diffCheck, nil
+		return diffCheck
 	}
 
 	// Build contextual views with limited context (3 lines before/after).
@@ -108,7 +108,7 @@ func ParseExpectedAndFound(diffOutput, crName, templateFileName string) (types.D
 		}
 	}
 
-	return diffCheck, nil
+	return diffCheck
 }
 
 // buildContextualView creates a view with changed lines and limited surrounding context.

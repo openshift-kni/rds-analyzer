@@ -135,10 +135,7 @@ func TestParseExpectedAndFound(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := ParseExpectedAndFound(tt.diffOutput, tt.crName, tt.templateFileName)
-			if err != nil {
-				t.Fatalf("ParseExpectedAndFound() error = %v", err)
-			}
+			result := ParseExpectedAndFound(tt.diffOutput, tt.crName, tt.templateFileName)
 
 			if len(result.ExpectedNotFound) != tt.wantExpectedNotFound {
 				t.Errorf("ExpectedNotFound count = %d, want %d", len(result.ExpectedNotFound), tt.wantExpectedNotFound)
@@ -528,10 +525,7 @@ func TestParseExpectedAndFound_ComplexDiffs(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := ParseExpectedAndFound(tt.diffOutput, tt.crName, tt.template)
-			if err != nil {
-				t.Fatalf("ParseExpectedAndFound() error = %v", err)
-			}
+			result := ParseExpectedAndFound(tt.diffOutput, tt.crName, tt.template)
 			tt.checkFunc(t, result)
 		})
 	}
