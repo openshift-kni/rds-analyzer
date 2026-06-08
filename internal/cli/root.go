@@ -66,7 +66,7 @@ func Execute() error {
 
 func init() {
 	rootCmd.Flags().StringVarP(&outputFormat, "output", "o", "text",
-		"(Optional) Output format: text or html.")
+		"(Optional) Output format: text, html, or json.")
 	rootCmd.Flags().StringVarP(&outputMode, "output-mode", "m", "simple",
 		"(Optional) Output mode: simple or reporting")
 	rootCmd.Flags().StringVarP(&targetVersion, "target", "t", "",
@@ -111,8 +111,8 @@ func runAnalysis(cmd *cobra.Command, args []string) error {
 
 // validateFlags validates command-line flag values.
 func validateFlags() error {
-	if outputFormat != "text" && outputFormat != "html" {
-		return fmt.Errorf("invalid output format %q: must be 'text' or 'html'", outputFormat)
+	if outputFormat != "text" && outputFormat != "html" && outputFormat != "json" {
+		return fmt.Errorf("invalid output format %q: must be 'text', 'html', or 'json'", outputFormat)
 	}
 
 	if outputMode != "simple" && outputMode != "reporting" {

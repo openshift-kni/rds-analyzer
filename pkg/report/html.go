@@ -318,10 +318,7 @@ func (g *HTMLGenerator) processDiffs(diffs []types.Diff, stats *ImpactStats) ([]
 			Description: d.Description,
 		}
 
-		formattedDiff, err := parser.ParseExpectedAndFound(d.DiffOutput, d.CRName, filepath.Base(d.CorrelatedTemplate))
-		if err != nil {
-			continue
-		}
+		formattedDiff := parser.ParseExpectedAndFound(d.DiffOutput, d.CRName, filepath.Base(d.CorrelatedTemplate))
 
 		allDiffChecks = append(allDiffChecks, formattedDiff)
 		ruleResult := g.ruleEngine.Evaluate(formattedDiff)

@@ -180,7 +180,6 @@ type evaluatedDiff struct {
 	diffCheck   types.DiffCheck
 	ruleResult  rules.EvaluationResult
 	finalImpact string
-	parseError  error
 }
 
 // printDiffs outputs the configuration differences section.
@@ -211,19 +210,14 @@ func (g *TextGenerator) printDiffs(diffs []types.Diff) {
 		}
 
 		ed := evaluatedDiff{diff: d}
-		formattedDiff, err := parser.ParseExpectedAndFound(d.DiffOutput, d.CRName, filepath.Base(d.CorrelatedTemplate))
-		if err != nil {
-			ed.parseError = err
-			ed.finalImpact = "NeedsReview" // Parse errors need review
-		} else {
-			ed.diffCheck = formattedDiff
-			ed.ruleResult = g.ruleEngine.Evaluate(formattedDiff)
-			allDiffChecks = append(allDiffChecks, formattedDiff)
+		formattedDiff := parser.ParseExpectedAndFound(d.DiffOutput, d.CRName, filepath.Base(d.CorrelatedTemplate))
+		ed.diffCheck = formattedDiff
+		ed.ruleResult = g.ruleEngine.Evaluate(formattedDiff)
+		allDiffChecks = append(allDiffChecks, formattedDiff)
 
-			// Determine final impact.
-			hasNeedsReview := hasUnmatchedLines(formattedDiff, ed.ruleResult)
-			ed.finalImpact = determineImpact(ed.ruleResult, hasNeedsReview)
-		}
+		// Determine final impact.
+		hasNeedsReview := hasUnmatchedLines(formattedDiff, ed.ruleResult)
+		ed.finalImpact = determineImpact(ed.ruleResult, hasNeedsReview)
 		evaluatedDiffs = append(evaluatedDiffs, ed)
 	}
 
@@ -250,13 +244,8 @@ func (g *TextGenerator) printDiffs(diffs []types.Diff) {
 		fmt.Fprintf(g.writer, "Description: %s\n", ed.diff.Description)
 		fmt.Fprintln(g.writer, "---")
 
-		if ed.parseError != nil {
-			fmt.Fprintf(g.writer, "Error parsing diff: %v\n", ed.parseError)
-			fmt.Fprintln(g.writer, ed.diff.DiffOutput)
-		} else {
-			g.printDiffCheck(ed.diffCheck, ed.ruleResult)
-			impactStats[ed.finalImpact]++
-		}
+		g.printDiffCheck(ed.diffCheck, ed.ruleResult)
+		impactStats[ed.finalImpact]++
 		fmt.Fprintln(g.writer)
 	}
 
